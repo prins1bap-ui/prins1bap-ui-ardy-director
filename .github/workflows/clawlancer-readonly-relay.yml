@@ -1,0 +1,101 @@
+name: Clawlancer Readonly Relay
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Securely inspect Clawlancer wallet state
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          AGENT_ID: 5631cd88-4561-4cbd-bf48-30b8ac57a70a
+          WALLET: 0xd07b82dfd08487510194ed8c60419636731d9de4
+        run: |
+          python -m pip install --quiet cryptography
+          python - <<'PY'
+          import base64,json,os,time,urllib.request,urllib.error
+          from cryptography.hazmat.primitives.asymmetric import rsa,padding
+          from cryptography.hazmat.primitives import serialization,hashes
+
+          repo=os.environ['REPO']; gh=os.environ['GH_TOKEN']; agent_id=os.environ['AGENT_ID']; wallet=os.environ['WALLET']
+          api='https://api.github.com'; branch='main'
+
+          def req(url,method='GET',body=None,headers=None):
+              h={'User-Agent':'dcash-readonly-relay/1.0'}
+              if headers:h.update(headers)
+              data=None if body is None else (body if isinstance(body,bytes) else json.dumps(body).encode())
+              r=urllib.request.Request(url,data=data,headers=h,method=method)
+              try:
+                  with urllib.request.urlopen(r,timeout=30) as resp:
+                      raw=resp.read()
+                      try:return resp.status,json.loads(raw) if raw else {}
+                      except Exception:return resp.status,raw.decode(errors='replace')
+              except urllib.error.HTTPError as e:
+                  raw=e.read()
+                  try:return e.code,json.loads(raw) if raw else {}
+                  except Exception:return e.code,raw.decode(errors='replace')
+              except Exception as e:
+                  return 599,{'error':type(e).__name__}
+
+          ghh={'Authorization':f'Bearer {gh}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2026-03-10','Content-Type':'application/json'}
+          def gh_get(path):
+              return req(f'{api}/repos/{repo}/contents/{path}?ref={branch}',headers=ghh)
+          def gh_put(path,text):
+              s,old=gh_get(path)
+              body={'message':f'Persist {path}','content':base64.b64encode(text.encode()).decode(),'branch':branch}
+              if s==200 and isinstance(old,dict) and old.get('sha'):body['sha']=old['sha']
+              return req(f'{api}/repos/{repo}/contents/{path}','PUT',body,ghh)
+
+          private=rsa.generate_private_key(public_exponent=65537,key_size=2048)
+          public=private.public_key().public_bytes(serialization.Encoding.PEM,serialization.PublicFormat.SubjectPublicKeyInfo).decode()
+          gh_put('bridge/readonly-relay-public.pem',public)
+          gh_put('bridge/readonly-relay-status.json',json.dumps({'stage':'awaiting_cipher','agent_id':agent_id,'wallet_address':wallet,'started_at':int(time.time())},indent=2))
+
+          ciphertext=None
+          for _ in range(90):
+              s,obj=gh_get('bridge/readonly-relay-cipher.json')
+              if s==200 and isinstance(obj,dict) and obj.get('content'):
+                  try:
+                      enc=json.loads(base64.b64decode(obj['content']).decode())
+                      ciphertext=base64.b64decode(enc['ciphertext'])
+                      break
+                  except Exception:
+                      pass
+              time.sleep(2)
+          if not ciphertext:
+              gh_put('bridge/readonly-relay-status.json',json.dumps({'stage':'cipher_timeout','agent_id':agent_id,'wallet_address':wallet},indent=2));raise SystemExit(2)
+
+          api_key=private.decrypt(ciphertext,padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),algorithm=hashes.SHA256(),label=None)).decode()
+          print(f'::add-mask::{api_key}')
+          auth={'Authorization':f'Bearer {api_key}','Accept':'application/json'}
+
+          ws,wb=req(f'https://clawlancer.ai/api/wallet/balance?agent_id={agent_id}',headers=auth)
+          as_,ab=req(f'https://clawlancer.ai/api/agents/{agent_id}',headers=auth)
+          rs,rb=req('https://mainnet.base.org','POST',{'jsonrpc':'2.0','method':'eth_getBalance','params':[wallet,'latest'],'id':1},{'Content-Type':'application/json'})
+          eth_wei=None
+          if rs==200 and isinstance(rb,dict) and isinstance(rb.get('result'),str):
+              try:eth_wei=int(rb['result'],16)
+              except Exception:pass
+
+          def safe(v):
+              if isinstance(v,dict):
+                  out={}
+                  for k,x in v.items():
+                      lk=str(k).lower()
+                      if any(t in lk for t in ('key','secret','token','authorization','private')):continue
+                      out[k]=safe(x)
+                  return out
+              if isinstance(v,list):return [safe(x) for x in v]
+              return v
+
+          result={'stage':'readonly_complete','agent_id':agent_id,'wallet_address':wallet,'wallet_http':ws,'wallet_response':safe(wb),'agent_http':as_,'agent_response':safe(ab),'base_rpc_http':rs,'base_eth_wei':eth_wei,'finished_at':int(time.time())}
+          gh_put('bridge/readonly-relay-status.json',json.dumps(result,indent=2))
+          print('READONLY_RESULT=COMPLETE')
+          PY
