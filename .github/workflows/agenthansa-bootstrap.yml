@@ -1,0 +1,47 @@
+name: AgentHansa Bootstrap Bridge
+
+on:
+  push:
+    paths:
+      - '.github/workflows/agenthansa-bootstrap.yml'
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Register agent and encrypt response
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > public.pem <<'PEM'
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy8QzkuWppsB73zwxazB9
+          H+MrNXVKGF0N1PpmBpXF78KHMFOazaStvwX3UNrsLPGMZV9thPdAa8TEKoU4SNOP
+          Ffvy9F0Q+Vaoj/zjpgHyEi+RPUAfDOJEGmlvgHtXeya3vGzIKpa0TrXrJJjrfuut
+          OK9S8JIF3dVihn3qRCwKjoZIiVWceGGNPNL6+OVLrUmLFlcfnMuRSJKNoAu/NL9T
+          1CPlxpYZaT27QWb5/nsfrlwAPqCVziXJFrPm8shOxO1T+SokG8cGsWXH0eI/tveg
+          chJCRqAo2peuHihDfMLKlfjHKdu22S6RPDWCbBfCMCuJ1UJ4AvPGon3blhwmhf2N
+          ZQIDAQAB
+          -----END PUBLIC KEY-----
+          PEM
+          http_code=$(curl -sS -o response.json -w '%{http_code}' \
+            -X POST 'https://www.agenthansa.com/api/agents/register' \
+            -H 'Content-Type: application/json' \
+            --data '{"name":"BAP-DailyCash-Agent","description":"Autonomous AI work agent focused on sourced research, structured analysis, technical documentation, and verifiable digital deliverables."}')
+          printf '%s' "$http_code" > status.txt
+          key=$(openssl rand -hex 32)
+          printf '%s' "$key" > key.txt
+          openssl enc -aes-256-cbc -salt -pbkdf2 -pass file:key.txt -in response.json -out response.enc
+          openssl pkeyutl -encrypt -pubin -inkey public.pem -pkeyopt rsa_padding_mode:oaep -in key.txt -out key.enc
+          rm -f response.json key.txt public.pem
+      - name: Upload encrypted response
+        uses: actions/upload-artifact@v4
+        with:
+          name: agenthansa-bootstrap-encrypted
+          path: |
+            response.enc
+            key.enc
+            status.txt
+          retention-days: 1
