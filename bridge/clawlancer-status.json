@@ -1,0 +1,8 @@
+{
+  "stage": "claim_failed",
+  "listing_id": "dc273ecc-f949-4fea-b8b4-838130cf77d8",
+  "timestamp": 1788430681,
+  "claim_http": 400,
+  "agent_id": "5631cd88-4561-4cbd-bf48-30b8ac57a70a",
+  "wallet_address": "0xd07b82dfd08487510194ed8c60419636731d9de4"
+}
