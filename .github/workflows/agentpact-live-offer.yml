@@ -17,7 +17,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Register seller and publish exact-match offer
+      - name: Register seller, publish exact-match offer, accept buyer deal
         shell: python
         run: |
           import json, os, time, uuid, urllib.request, urllib.error, urllib.parse
@@ -33,7 +33,7 @@ jobs:
 
           def call(method,path,body=None,key=None):
               data=None if body is None else json.dumps(body).encode()
-              h={'content-type':'application/json','user-agent':'blake-agentpact-live-offer/3.0'}
+              h={'content-type':'application/json','user-agent':'blake-agentpact-live-offer/3.1'}
               if key: h['x-api-key']=key
               if method!='GET': h['idempotency-key']=f'{AGENT_ID}-{time.time_ns()}'
               req=urllib.request.Request(API+path,data=data,headers=h,method=method)
@@ -99,39 +99,45 @@ jobs:
               issue('AgentPact exact-match offer failed',f'HTTP {os_}: `{json.dumps(offer)}`')
               raise SystemExit(4)
 
-          # Seller-initiated proposal is attempted because AgentPact documents search-needs -> propose-deal.
-          proposal={
-              'buyerAgentId':BUYER,
-              'sellerAgentId':AGENT_ID,
-              'offerId':offer_id,
-              'needId':NEED,
-              'negotiatedTotal':PRICE,
-              'maxPriceDeltaPct':0,
-              'milestones':[{'idx':1,'title':'Onboarding bootstrap fulfillment','description':'Complete the posted onboarding/test need immediately.','amount':PRICE,'acceptanceCriteria':n.get('acceptance_criteria') or []}]
-          }
-          ps,pobj=call('POST','/api/deals/propose',proposal,key)
-          deal=(pobj.get('deal',pobj) if isinstance(pobj,dict) else {})
-          deal_id=deal.get('id') if isinstance(deal,dict) else None
+          # Trigger only documented matching recomputation. Do not invoke buyer/admin autopilot.
+          recompute_status,recompute=call('POST','/api/matches/recompute',{})
 
-          # Force the seller into recommendation/matching surfaces and stay online while auto-buy evaluates it.
-          ms,matches=call('GET',f'/api/matches/recommendations?{urllib.parse.urlencode({"agentId":AGENT_ID})}',key=key)
-          for _ in range(20):
+          # Seller cannot impersonate buyer to propose. Wait for the auto-buy buyer/platform to create the deal.
+          deal=None
+          deal_id=None
+          for _ in range(28):
               call('POST',f'/api/agents/{AGENT_ID}/heartbeat',{},key)
-              if not deal_id:
-                  for path in (f'/api/deals?agentId={urllib.parse.quote(AGENT_ID)}',f'/api/deals?offerId={urllib.parse.quote(offer_id)}'):
-                      ds,dobj=call('GET',path,key=key)
-                      rows=dobj if isinstance(dobj,list) else (dobj.get('deals',[]) if isinstance(dobj,dict) else [])
-                      for d in rows:
-                          if not isinstance(d,dict): continue
-                          if d.get('offerId')==offer_id or d.get('offer_id')==offer_id or d.get('sellerAgentId')==AGENT_ID or d.get('seller_agent_id')==AGENT_ID:
-                              deal=d; deal_id=d.get('id'); break
-                      if deal_id: break
+              ds,dobj=call('GET',f'/api/deals?offerId={urllib.parse.quote(offer_id)}')
+              rows=dobj if isinstance(dobj,list) else (dobj.get('deals',[]) if isinstance(dobj,dict) else [])
+              for d in rows:
+                  if not isinstance(d,dict): continue
+                  oid=d.get('offerId') or d.get('offer_id')
+                  nid=d.get('needId') or d.get('need_id')
+                  sid=d.get('sellerAgentId') or d.get('seller_agent_id')
+                  if oid==offer_id and nid==NEED and sid==AGENT_ID:
+                      deal=d
+                      deal_id=d.get('id')
+                      break
               if deal_id: break
               time.sleep(15)
 
-          if deal_id:
-              safe={k:v for k,v in deal.items() if all(x not in k.lower() for x in ('key','secret','token'))}
-              issue('AgentPact DEAL CREATED — 0.5 USDC target',f'## Executed\n- Need `{NEED}`\n- Buyer `{BUYER}`\n- Seller `{AGENT_ID}`\n- Offer `{offer_id}`\n- Deal `{deal_id}`\n- Price **{PRICE} USDC**\n- Proposal HTTP {ps}\n- Deal snapshot `{json.dumps(safe)}`\n\nA real deal exists. Revenue remains uncounted until payment settlement is verified.')
-          else:
-              err=pobj.get('error') if isinstance(pobj,dict) else str(pobj)
-              issue('AgentPact exact 0.5-USDC offer LIVE',f'## Executed\n- Need `{NEED}`\n- Buyer `{BUYER}` (auto-buy enabled)\n- Seller `{AGENT_ID}`\n- Offer `{offer_id}`\n- Price **{PRICE} USDC**\n- Category `{category}`\n- Tags `{", ".join(tags)}`\n- Seller proposal result HTTP {ps}: `{err}`\n- Matching endpoint HTTP {ms}\n\nThe seller-controlled action is complete and the offer is live. No payment is counted until settlement is verified.')
+          ms,matches=call('GET',f'/api/matches/recommendations?{urllib.parse.urlencode({"agentId":AGENT_ID})}',key=key)
+          rows=matches if isinstance(matches,list) else (matches.get('matches',[]) if isinstance(matches,dict) else [])
+          target_matches=[]
+          for m in rows:
+              if not isinstance(m,dict): continue
+              mid=m.get('needId') or m.get('need_id')
+              moid=m.get('offerId') or m.get('offer_id')
+              if mid==NEED and moid==offer_id: target_matches.append(m)
+
+          if not deal_id:
+              issue('AgentPact exact 0.5-USDC offer LIVE',f'## Executed\n- Need `{NEED}`\n- Buyer `{BUYER}` (auto-buy enabled)\n- Seller `{AGENT_ID}`\n- Offer `{offer_id}`\n- Price **{PRICE} USDC**\n- Category `{category}`\n- Tags `{", ".join(tags)}`\n- Matching recompute HTTP {recompute_status}\n- Target matches observed: **{len(target_matches)}**\n\nNo buyer-created deal appeared during this execution. Collected revenue: **0**.')
+              raise SystemExit(0)
+
+          state_before=deal.get('status')
+          accept_status,accept_result=call('POST',f'/api/deals/{deal_id}/accept',{'actorAgentId':AGENT_ID},key)
+          get_status,current=call('GET',f'/api/deals/{deal_id}')
+          current_deal=current.get('deal',current) if isinstance(current,dict) else {}
+          state_after=current_deal.get('status') if isinstance(current_deal,dict) else None
+          safe_accept={k:v for k,v in accept_result.items() if all(x not in k.lower() for x in ('key','secret','token'))} if isinstance(accept_result,dict) else accept_result
+          issue('AgentPact DEAL ACCEPTED — 0.5 USDC',f'## Executed\n- Need `{NEED}`\n- Buyer `{BUYER}`\n- Seller `{AGENT_ID}`\n- Offer `{offer_id}`\n- Deal `{deal_id}`\n- Price **{PRICE} USDC**\n- State before acceptance: **{state_before}**\n- Seller acceptance HTTP {accept_status}: `{json.dumps(safe_accept)}`\n- State after acceptance: **{state_after}**\n\nA buyer-created deal was accepted by the seller. Collected revenue remains **0** until settlement is independently verified.')
