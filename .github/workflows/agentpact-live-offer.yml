@@ -1,0 +1,137 @@
+name: AgentPact Live Offer
+
+on:
+  push:
+    paths:
+      - '.github/workflows/agentpact-live-offer.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Register seller and publish exact-match offer
+        shell: python
+        run: |
+          import json, os, time, uuid, urllib.request, urllib.error, urllib.parse
+
+          API='https://api.agentpact.xyz'
+          AGENT_ID=str(uuid.uuid4())
+          WALLET='0x52513A733D4b52282F2b4f5A91D965D38b64f3BB'
+          BUYER='6c0dc532-e64c-4e74-9fdd-2465e01c2a06'
+          NEED='3dc0c7bb-e7fc-4815-92df-135770ec49ca'
+          PRICE=0.5
+          REPO=os.environ['GITHUB_REPOSITORY']
+          GHT=os.environ['GH_TOKEN']
+
+          def call(method,path,body=None,key=None):
+              data=None if body is None else json.dumps(body).encode()
+              h={'content-type':'application/json','user-agent':'blake-agentpact-live-offer/3.0'}
+              if key: h['x-api-key']=key
+              if method!='GET': h['idempotency-key']=f'{AGENT_ID}-{time.time_ns()}'
+              req=urllib.request.Request(API+path,data=data,headers=h,method=method)
+              try:
+                  with urllib.request.urlopen(req,timeout=25) as r:
+                      raw=r.read().decode(errors='replace')
+                      try: obj=json.loads(raw)
+                      except: obj={'raw':raw}
+                      return r.status,obj
+              except urllib.error.HTTPError as e:
+                  raw=e.read().decode(errors='replace')
+                  try: obj=json.loads(raw)
+                  except: obj={'raw':raw}
+                  return e.code,obj
+              except Exception as e:
+                  return 599,{'error':type(e).__name__,'message':str(e)}
+
+          def issue(title,body):
+              req=urllib.request.Request(
+                  f'https://api.github.com/repos/{REPO}/issues',
+                  data=json.dumps({'title':title,'body':body}).encode(),
+                  method='POST',
+                  headers={'Authorization':f'Bearer {GHT}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json','User-Agent':'agentpact-live-offer'})
+              with urllib.request.urlopen(req,timeout=25) as r: return json.loads(r.read().decode())
+
+          ns,need=call('GET',f'/api/needs/{NEED}')
+          bs,buyer=call('GET',f'/api/agents/{BUYER}')
+          n=need.get('need',need) if isinstance(need,dict) else {}
+          b=buyer.get('agent',buyer) if isinstance(buyer,dict) else {}
+          if ns>=400 or bs>=400 or n.get('id')!=NEED or not b.get('auto_buy_enabled'):
+              issue('AgentPact target no longer executable',f'Need HTTP {ns}; buyer HTTP {bs}; need matched={n.get("id")==NEED}; auto-buy={b.get("auto_buy_enabled")}.')
+              raise SystemExit(2)
+          max_auto=b.get('max_auto_deal_price')
+          if max_auto is not None and float(max_auto)<PRICE:
+              issue('AgentPact target price exceeds auto-buy',f'Buyer max auto-deal price is {max_auto}; required price is {PRICE}.')
+              raise SystemExit(2)
+
+          rs,reg=call('POST','/api/auth/register',{'agentId':AGENT_ID,'walletAddress':WALLET})
+          key=(reg.get('apiKey') or reg.get('api_key') or reg.get('key') or reg.get('token')) if isinstance(reg,dict) else None
+          if rs>=400 or not key:
+              issue('AgentPact fresh seller registration failed',f'HTTP {rs}; safe keys={list(reg) if isinstance(reg,dict) else []}.')
+              raise SystemExit(3)
+          print(f'::add-mask::{key}')
+          call('POST',f'/api/agents/{AGENT_ID}/heartbeat',{},key)
+
+          title=n.get('title') or 'Buyer-side onboarding bootstrap test'
+          category=n.get('category') or 'onboarding'
+          tags=n.get('tags') or ['onboarding','test']
+          offer_payload={
+              'agentId':AGENT_ID,
+              'title':title,
+              'descriptionMd':'Immediate exact-price fulfillment for the live onboarding/test need. Generic text delivery; AI-agent execution disclosed.',
+              'category':category,
+              'tags':tags,
+              'basePrice':PRICE,
+              'maxPriceDeltaPct':0,
+              'fulfillmentType':'generic'
+          }
+          os_,offer=call('POST','/api/offers',offer_payload,key)
+          o=offer.get('offer',offer) if isinstance(offer,dict) else {}
+          offer_id=o.get('id')
+          if os_>=400 or not offer_id:
+              issue('AgentPact exact-match offer failed',f'HTTP {os_}: `{json.dumps(offer)}`')
+              raise SystemExit(4)
+
+          # Seller-initiated proposal is attempted because AgentPact documents search-needs -> propose-deal.
+          proposal={
+              'buyerAgentId':BUYER,
+              'sellerAgentId':AGENT_ID,
+              'offerId':offer_id,
+              'needId':NEED,
+              'negotiatedTotal':PRICE,
+              'maxPriceDeltaPct':0,
+              'milestones':[{'idx':1,'title':'Onboarding bootstrap fulfillment','description':'Complete the posted onboarding/test need immediately.','amount':PRICE,'acceptanceCriteria':n.get('acceptance_criteria') or []}]
+          }
+          ps,pobj=call('POST','/api/deals/propose',proposal,key)
+          deal=(pobj.get('deal',pobj) if isinstance(pobj,dict) else {})
+          deal_id=deal.get('id') if isinstance(deal,dict) else None
+
+          # Force the seller into recommendation/matching surfaces and stay online while auto-buy evaluates it.
+          ms,matches=call('GET',f'/api/matches/recommendations?{urllib.parse.urlencode({"agentId":AGENT_ID})}',key=key)
+          for _ in range(20):
+              call('POST',f'/api/agents/{AGENT_ID}/heartbeat',{},key)
+              if not deal_id:
+                  for path in (f'/api/deals?agentId={urllib.parse.quote(AGENT_ID)}',f'/api/deals?offerId={urllib.parse.quote(offer_id)}'):
+                      ds,dobj=call('GET',path,key=key)
+                      rows=dobj if isinstance(dobj,list) else (dobj.get('deals',[]) if isinstance(dobj,dict) else [])
+                      for d in rows:
+                          if not isinstance(d,dict): continue
+                          if d.get('offerId')==offer_id or d.get('offer_id')==offer_id or d.get('sellerAgentId')==AGENT_ID or d.get('seller_agent_id')==AGENT_ID:
+                              deal=d; deal_id=d.get('id'); break
+                      if deal_id: break
+              if deal_id: break
+              time.sleep(15)
+
+          if deal_id:
+              safe={k:v for k,v in deal.items() if all(x not in k.lower() for x in ('key','secret','token'))}
+              issue('AgentPact DEAL CREATED — 0.5 USDC target',f'## Executed\n- Need `{NEED}`\n- Buyer `{BUYER}`\n- Seller `{AGENT_ID}`\n- Offer `{offer_id}`\n- Deal `{deal_id}`\n- Price **{PRICE} USDC**\n- Proposal HTTP {ps}\n- Deal snapshot `{json.dumps(safe)}`\n\nA real deal exists. Revenue remains uncounted until payment settlement is verified.')
+          else:
+              err=pobj.get('error') if isinstance(pobj,dict) else str(pobj)
+              issue('AgentPact exact 0.5-USDC offer LIVE',f'## Executed\n- Need `{NEED}`\n- Buyer `{BUYER}` (auto-buy enabled)\n- Seller `{AGENT_ID}`\n- Offer `{offer_id}`\n- Price **{PRICE} USDC**\n- Category `{category}`\n- Tags `{", ".join(tags)}`\n- Seller proposal result HTTP {ps}: `{err}`\n- Matching endpoint HTTP {ms}\n\nThe seller-controlled action is complete and the offer is live. No payment is counted until settlement is verified.')
