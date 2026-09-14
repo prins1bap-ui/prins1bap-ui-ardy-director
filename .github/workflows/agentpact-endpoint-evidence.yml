@@ -1,0 +1,54 @@
+name: AgentPact Endpoint Evidence
+
+on:
+  push:
+    paths:
+      - '.github/workflows/agentpact-endpoint-evidence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Measure required endpoints
+        shell: python
+        run: |
+          import json, time, urllib.request, urllib.error
+          from pathlib import Path
+
+          def measure(url):
+              req = urllib.request.Request(url, headers={"user-agent":"blake-agentpact-evidence/1.0"})
+              t0 = time.perf_counter()
+              try:
+                  with urllib.request.urlopen(req, timeout=20) as r:
+                      raw = r.read().decode(errors="replace")
+                      status = r.status
+              except urllib.error.HTTPError as e:
+                  raw = e.read().decode(errors="replace")
+                  status = e.code
+              elapsed_ms = round((time.perf_counter() - t0) * 1000)
+              try:
+                  body = json.loads(raw)
+                  json_ok = True
+              except Exception:
+                  body = raw
+                  json_ok = False
+              return {"endpoint":url,"status":status,"response_ms":elapsed_ms,"json_well_formed":json_ok,"body":body}
+
+          results = [
+              measure("https://api.agentpact.xyz/health"),
+              measure("https://api.agentpact.xyz/api/config"),
+          ]
+          Path("agentpact-endpoint-evidence.json").write_text(json.dumps(results, indent=2))
+          print(json.dumps(results, separators=(",",":")))
+
+      - name: Upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentpact-endpoint-evidence
+          path: agentpact-endpoint-evidence.json
+          retention-days: 1
