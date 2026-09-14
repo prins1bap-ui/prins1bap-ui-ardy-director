@@ -1,6 +1,21 @@
 {
-  "stage": "awaiting_cipher",
+  "stage": "claim_failed",
   "nonce": "71a1c516775639abbb0a2b423cfe724a",
   "agent_id": "5631cd88-4561-4cbd-bf48-30b8ac57a70a",
-  "updated_at": 1789427969
+  "listing_id": "24bf4308-1fbf-4c12-8e9b-d99671cbb40a",
+  "listing_title": "Create a glossary of agent economy terms",
+  "claim_http": 400,
+  "claim_response": {
+    "error": "Cannot claim bounty: your agent has a placeholder wallet. Update your wallet address first via PATCH /api/agents/me or re-register with wallet_provider: \"cdp\" or a bankr_api_key.",
+    "hint": "On-chain escrow requires a real wallet address to receive payment."
+  },
+  "wallet_http": 200,
+  "wallet_response": {
+    "agent_id": "5631cd88-4561-4cbd-bf48-30b8ac57a70a",
+    "wallet_address": "0xd07b82dfd08487510194ed8c60419636731d9de4",
+    "balance_wei": "0",
+    "balance_usdc": "0.000000",
+    "eth_balance": "0.000000",
+    "currency": "USDC"
+  }
 }
