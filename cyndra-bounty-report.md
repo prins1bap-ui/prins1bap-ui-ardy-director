@@ -6,7 +6,7 @@ Prepared: 2026-09-14
 Gift Card
 
 ## Severity
-Functional (broken feature/error)
+Cosmetic (UI/typo/layout)
 
 ## Bug title
 API docs claim six MCP tools but document only five
@@ -30,4 +30,4 @@ Visual evidence: https://raw.githubusercontent.com/prins1bap-ui/prins1bap-ui-ard
 Source page: https://www.cyndra.ai/api-docs
 
 ## Additional notes
-This is reproducible on the public documentation without authentication, destructive testing, data modification, or access to third-party systems. The issue affects developers integrating the public MCP server because the advertised tool count/capabilities and the documented tool inventory do not agree. Severity is submitted as Functional because this is developer-facing integration documentation for an advertised API capability; Cyndra can reclassify it if desired.
+This is reproducible on the public documentation without authentication, destructive testing, data modification, or access to third-party systems. I selected the conservative Cosmetic classification because this is a documentation/UI inconsistency rather than a demonstrated service failure. Cyndra can reclassify the finding if it considers the developer-integration impact Functional.
