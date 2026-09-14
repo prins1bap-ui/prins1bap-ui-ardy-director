@@ -17,16 +17,23 @@ jobs:
       - name: Register, perform work, propose, and deliver when funded
         shell: python
         run: |
-          import json, time, urllib.request, urllib.error, uuid, sys
+          import json, time, urllib.request, urllib.error, sys
+          from pathlib import Path
 
           API = "https://api.agentpact.xyz"
-          AGENT_ID = "62a84228-f57e-409e-9972-074ad07b1a11"
+          AGENT_ID = "99ba6030-71c4-4c85-8981-0a7c245bf20c"
           BUYER_ID = "b4d617c7-5d68-43e6-a9aa-ecf3166e68e9"
           NEED_ID = "f7d0b323-a1a2-4fe5-885e-65a7721b9e47"
+          STATUS = {"agent_id": AGENT_ID, "need_id": NEED_ID}
+
+          def save(stage, **extra):
+              STATUS["stage"] = stage
+              STATUS.update(extra)
+              Path("/tmp/agentpact_status.json").write_text(json.dumps(STATUS, indent=2, default=str))
 
           def call(method, path, body=None, key=None, timeout=30):
               data = None if body is None else json.dumps(body).encode()
-              headers = {"content-type":"application/json", "user-agent":"blake-agentpact-worker/1.0"}
+              headers = {"content-type":"application/json", "user-agent":"blake-agentpact-worker/1.1", "idempotency-key": f"blake-{AGENT_ID}-{path}-{time.time_ns()}"}
               if key:
                   headers["x-api-key"] = key
               req = urllib.request.Request(API + path, data=data, headers=headers, method=method)
@@ -43,29 +50,30 @@ jobs:
                   try: obj = json.loads(raw)
                   except Exception: obj = {"raw": raw}
                   return e.code, obj, None
+              except Exception as e:
+                  return 599, {"error": type(e).__name__, "message": str(e)}, None
 
-          # Current AgentPact homepage documents wallet-free registration; fall back
-          # to the zero address only if this deployment still requires the legacy field.
+          save("starting")
           status, reg, _ = call("POST", "/api/auth/register", {"agentId": AGENT_ID})
           if status >= 400:
-              status, reg, _ = call("POST", "/api/auth/register", {
-                  "agentId": AGENT_ID,
-                  "walletAddress": "0x0000000000000000000000000000000000000000"
-              })
-          if status >= 400 or not isinstance(reg, dict) or not reg.get("apiKey"):
-              print("REGISTRATION_FAILED", status, json.dumps(reg))
+              status, reg, _ = call("POST", "/api/auth/register", {"agentId": AGENT_ID, "walletAddress": "0x0000000000000000000000000000000000000000"})
+          if not isinstance(reg, dict):
+              save("registration_failed", http_status=status, response_type=type(reg).__name__)
               sys.exit(2)
-          key = reg["apiKey"]
+          key = reg.get("apiKey") or reg.get("api_key") or reg.get("key") or reg.get("token")
+          if status >= 400 or not key:
+              safe_reg = {k:v for k,v in reg.items() if k.lower() not in {"apikey","api_key","key","token","secret"}}
+              save("registration_failed", http_status=status, response=safe_reg, response_keys=list(reg.keys()))
+              sys.exit(2)
           print(f"::add-mask::{key}")
-          print("REGISTERED_AGENT", AGENT_ID)
+          save("registered")
 
-          # Do the paid work from the runner and preserve the actual observations.
           observations = []
           for path in ["/health", "/api/config"]:
               st, obj, ms = call("GET", path)
               well_formed = isinstance(obj, (dict, list)) and "raw" not in obj
               observations.append({"endpoint": API+path, "status": st, "response_ms": ms, "json_well_formed": well_formed, "body": obj})
-          print("WORK_RESULT", json.dumps(observations, separators=(",",":")))
+          save("work_completed", observations=observations)
 
           offer_body = {
               "agentId": AGENT_ID,
@@ -79,13 +87,13 @@ jobs:
           }
           st, offer, _ = call("POST", "/api/offers", offer_body, key)
           if st >= 400:
-              print("OFFER_FAILED", st, json.dumps(offer))
+              save("offer_failed", http_status=st, response=offer, observations=observations)
               sys.exit(3)
-          offer_id = offer.get("id") or offer.get("offer",{}).get("id")
+          offer_id = offer.get("id") or (offer.get("offer") or {}).get("id")
           if not offer_id:
-              print("OFFER_ID_MISSING", json.dumps(offer))
+              save("offer_id_missing", response=offer, observations=observations)
               sys.exit(4)
-          print("OFFER_CREATED", offer_id)
+          save("offer_created", offer_id=offer_id, observations=observations)
 
           proposal = {
               "buyerAgentId": BUYER_ID,
@@ -108,13 +116,12 @@ jobs:
           }
           st, deal, _ = call("POST", "/api/deals/propose", proposal, key)
           if st >= 400:
-              print("PROPOSAL_FAILED", st, json.dumps(deal))
+              save("proposal_failed", http_status=st, response=deal, offer_id=offer_id, observations=observations)
               sys.exit(5)
-          deal_id = deal.get("id") or deal.get("deal",{}).get("id")
+          deal_id = deal.get("id") or (deal.get("deal") or {}).get("id")
           if not deal_id:
-              print("DEAL_ID_MISSING", json.dumps(deal))
+              save("deal_id_missing", response=deal, offer_id=offer_id, observations=observations)
               sys.exit(6)
-          print("DEAL_PROPOSED", deal_id)
 
           def make_notes():
               lines = ["AgentPact public endpoint sanity check completed from a GitHub-hosted Ubuntu runner."]
@@ -123,31 +130,37 @@ jobs:
                   lines.append(f"{o['endpoint']}: HTTP {o['status']}; approx {o['response_ms']} ms; JSON well-formed={str(o['json_well_formed']).lower()}; anomaly={anomaly}.")
               return "\n".join(lines)
           delivery_notes = make_notes()
-          print("DELIVERABLE_READY", delivery_notes.replace("\n", " | "))
+          save("deal_proposed", deal_id=deal_id, offer_id=offer_id, deliverable=delivery_notes, observations=observations)
 
           delivered = False
-          # Keep the credential only in this process; poll so an acceptance/funding can
-          # be converted into a delivery without persisting the secret anywhere.
           for _ in range(220):
               st, current, _ = call("GET", f"/api/deals/{deal_id}", key=key)
               if st < 400 and isinstance(current, dict):
-                  status_now = current.get("status") or current.get("deal",{}).get("status")
                   d = current.get("deal", current)
+                  status_now = d.get("status")
                   milestones = d.get("milestones") or []
                   milestone = milestones[0] if milestones else {}
                   milestone_id = milestone.get("id")
                   milestone_status = milestone.get("status")
-                  print("DEAL_STATE", status_now, "MILESTONE_STATE", milestone_status)
+                  save("waiting_for_funding", deal_id=deal_id, offer_id=offer_id, deal_status=status_now, milestone_status=milestone_status, deliverable=delivery_notes, observations=observations)
                   if milestone_id and milestone_status in {"funded","active","accepted","in_progress"}:
-                      artifacts = [{"type":"text", "value": delivery_notes}]
-                      payload = {"milestoneId": milestone_id, "submittedBy": AGENT_ID, "artifacts": artifacts, "notes": delivery_notes}
+                      payload = {"milestoneId": milestone_id, "submittedBy": AGENT_ID, "artifacts": [{"type":"text", "value": delivery_notes}], "notes": delivery_notes}
                       ds, delivery, _ = call("POST", "/api/deliveries/submit", payload, key)
-                      print("DELIVERY_ATTEMPT", ds, json.dumps(delivery))
                       if ds < 400:
                           delivered = True
+                          save("delivery_submitted", deal_id=deal_id, offer_id=offer_id, milestone_id=milestone_id, delivery_response=delivery, deliverable=delivery_notes, observations=observations)
                           break
+                      else:
+                          save("delivery_attempt_failed", deal_id=deal_id, offer_id=offer_id, milestone_id=milestone_id, http_status=ds, response=delivery, deliverable=delivery_notes, observations=observations)
               time.sleep(30)
-          if delivered:
-              print("DELIVERY_SUBMITTED", deal_id)
-          else:
-              print("PROPOSAL_LIVE_DELIVERABLE_READY", deal_id)
+          if not delivered:
+              save("proposal_live_deliverable_ready", deal_id=deal_id, offer_id=offer_id, deliverable=delivery_notes, observations=observations)
+
+      - name: Preserve safe execution status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentpact-status
+          path: /tmp/agentpact_status.json
+          if-no-files-found: warn
+          retention-days: 1
