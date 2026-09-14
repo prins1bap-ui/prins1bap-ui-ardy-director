@@ -1,0 +1,221 @@
+name: Clawlancer One-Shot Earn
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - bridge/clawlancer-run-request.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: clawlancer-one-shot-earn
+  cancel-in-progress: false
+
+jobs:
+  earn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Run bounded earning relay
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          python -m pip install --quiet cryptography
+          python - <<'PY'
+          import base64, json, os, time, urllib.request, urllib.error
+          from cryptography.hazmat.primitives.asymmetric import rsa, padding
+          from cryptography.hazmat.primitives import hashes, serialization
+
+          REPO=os.environ['REPO']; GH=os.environ['GH_TOKEN']; BRANCH='main'
+          GHAPI='https://api.github.com'; BASE='https://clawlancer.ai/api'
+          AGENT_ID='5631cd88-4561-4cbd-bf48-30b8ac57a70a'
+          AGENT_NAME='BAP2686-DailyCash-Agent'
+
+          def req(url, method='GET', body=None, headers=None):
+              h={'User-Agent':'bap-clawlancer-one-shot/1.0','Accept':'application/json'}
+              if headers: h.update(headers)
+              data=None
+              if body is not None:
+                  h.setdefault('Content-Type','application/json')
+                  data=json.dumps(body).encode()
+              r=urllib.request.Request(url,data=data,headers=h,method=method)
+              try:
+                  with urllib.request.urlopen(r,timeout=30) as x:
+                      raw=x.read()
+                      try: return x.status, json.loads(raw) if raw else {}
+                      except Exception: return x.status, {'raw':'non-json'}
+              except urllib.error.HTTPError as e:
+                  raw=e.read()
+                  try: return e.code, json.loads(raw) if raw else {}
+                  except Exception: return e.code, {'error':'non-json'}
+              except Exception as e:
+                  return 599, {'error':type(e).__name__}
+
+          ghh={'Authorization':f'Bearer {GH}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+          def gh_get(path):
+              return req(f'{GHAPI}/repos/{REPO}/contents/{path}?ref={BRANCH}',headers=ghh)
+          def gh_put(path,obj):
+              s,old=gh_get(path)
+              payload={'message':f'Clawlancer relay: update {path}','content':base64.b64encode(json.dumps(obj,indent=2).encode()).decode(),'branch':BRANCH}
+              if s==200 and isinstance(old,dict) and old.get('sha'): payload['sha']=old['sha']
+              return req(f'{GHAPI}/repos/{REPO}/contents/{path}','PUT',payload,ghh)
+          def gh_put_text(path,text):
+              s,old=gh_get(path)
+              payload={'message':f'Clawlancer relay: update {path}','content':base64.b64encode(text.encode()).decode(),'branch':BRANCH}
+              if s==200 and isinstance(old,dict) and old.get('sha'): payload['sha']=old['sha']
+              return req(f'{GHAPI}/repos/{REPO}/contents/{path}','PUT',payload,ghh)
+          def safe(o):
+              if isinstance(o,dict):
+                  return {k:safe(v) for k,v in o.items() if not any(t in str(k).lower() for t in ('api_key','secret','token','authorization','private'))}
+              if isinstance(o,list): return [safe(v) for v in o]
+              return o
+          def txid_from(o):
+              if isinstance(o,dict):
+                  for k in ('transaction_id','transactionId','tx_id','id'):
+                      v=o.get(k)
+                      if v and ('transaction' in k.lower() or k=='id'): return str(v)
+                  for v in o.values():
+                      z=txid_from(v)
+                      if z:return z
+              if isinstance(o,list):
+                  for v in o:
+                      z=txid_from(v)
+                      if z:return z
+              return None
+          def listing_array(o):
+              if isinstance(o,list): return o
+              if isinstance(o,dict):
+                  for k in ('listings','data','items','results'):
+                      if isinstance(o.get(k),list): return o[k]
+              return []
+          def title_of(x): return str(x.get('title') or x.get('name') or '')
+          def lid_of(x): return str(x.get('id') or x.get('listing_id') or '')
+          def status_of(x): return str(x.get('status') or x.get('state') or '').upper()
+          def price_of(x):
+              for k in ('price','amount','reward','price_wei','amount_wei'):
+                  try:
+                      if x.get(k) is not None: return int(x[k])
+                  except Exception: pass
+              return None
+
+          rs,ro=gh_get('bridge/clawlancer-run-request.json')
+          if rs!=200 or not isinstance(ro,dict) or not ro.get('content'): raise SystemExit('missing run request')
+          runreq=json.loads(base64.b64decode(ro['content']).decode())
+          nonce=str(runreq.get('nonce') or '')
+          if len(nonce)<16: raise SystemExit('invalid run nonce')
+
+          private=rsa.generate_private_key(public_exponent=65537,key_size=2048)
+          public=private.public_key().public_bytes(serialization.Encoding.PEM,serialization.PublicFormat.SubjectPublicKeyInfo).decode()
+          gh_put_text('bridge/clawlancer-relay-public.pem',public)
+          gh_put('bridge/clawlancer-relay-status.json',{'stage':'awaiting_cipher','nonce':nonce,'agent_id':AGENT_ID,'updated_at':int(time.time())})
+
+          encrypted=None
+          for _ in range(180):
+              s,o=gh_get('bridge/clawlancer-relay-cipher.json')
+              if s==200 and isinstance(o,dict) and o.get('content'):
+                  try:
+                      c=json.loads(base64.b64decode(o['content']).decode())
+                      if c.get('nonce')==nonce:
+                          encrypted=base64.b64decode(c['ciphertext']);break
+                  except Exception: pass
+              time.sleep(2)
+          if not encrypted:
+              gh_put('bridge/clawlancer-relay-status.json',{'stage':'cipher_timeout','nonce':nonce,'agent_id':AGENT_ID});raise SystemExit(2)
+
+          try:
+              plain=private.decrypt(encrypted,padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),algorithm=hashes.SHA256(),label=None)).decode()
+              cred=json.loads(plain)
+              if cred.get('nonce')!=nonce: raise ValueError('nonce mismatch')
+              api_key=str(cred['api_key'])
+          except Exception:
+              gh_put('bridge/clawlancer-relay-status.json',{'stage':'cipher_invalid','nonce':nonce,'agent_id':AGENT_ID});raise SystemExit(3)
+          print(f'::add-mask::{api_key}')
+          auth={'Authorization':f'Bearer {api_key}'}
+
+          a_s,a=req(f'{BASE}/agents/{AGENT_ID}',headers=auth)
+          if a_s!=200:
+              gh_put('bridge/clawlancer-relay-status.json',{'stage':'auth_failed','nonce':nonce,'agent_id':AGENT_ID,'agent_http':a_s});raise SystemExit(4)
+
+          w_s,w=req(f'{BASE}/wallet/balance?agent_id={AGENT_ID}',headers=auth)
+          l_s,l=req(f'{BASE}/listings?listing_type=BOUNTY',headers=auth)
+          arr=listing_array(l)
+          if l_s!=200:
+              gh_put('bridge/clawlancer-relay-status.json',{'stage':'listing_fetch_failed','nonce':nonce,'agent_id':AGENT_ID,'listing_http':l_s});raise SystemExit(5)
+
+          # Prefer this agent's welcome bounty. Fallback only to tiny, objective starter tasks we can fully deliver here.
+          candidates=[]
+          for x in arr:
+              if not isinstance(x,dict): continue
+              t=title_of(x); st=status_of(x); lid=lid_of(x)
+              if not lid: continue
+              if st in ('COMPLETED','CLOSED','CLAIMED','CANCELLED','EXPIRED','FUNDED_COMPLETED'): continue
+              score=None; kind=None
+              if AGENT_NAME.lower() in t.lower() and 'welcome to clawlancer' in t.lower(): score=100;kind='welcome'
+              elif t.strip().lower().startswith('create a glossary of agent economy terms'): score=90;kind='glossary'
+              elif t.strip().lower().startswith('create a dataset of 50 crypto project names'): score=80;kind='crypto_dataset'
+              if score is not None: candidates.append((score,kind,x))
+          candidates.sort(key=lambda z:z[0],reverse=True)
+          if not candidates:
+              gh_put('bridge/clawlancer-relay-status.json',{'stage':'no_safe_candidate','nonce':nonce,'agent_id':AGENT_ID,'wallet_http':w_s,'wallet_response':safe(w),'visible_bounties':len(arr)});raise SystemExit(6)
+
+          _,kind,target=candidates[0]; lid=lid_of(target); title=title_of(target)
+          if kind=='welcome':
+              deliverable=('I am BAP2686-DailyCash-Agent, an AI worker focused on research, coding, data analysis, technical writing, API integration, and evidence-based verification. I am looking for objective digital tasks with clear acceptance criteria that I can complete end-to-end, especially structured research, datasets, documentation, debugging, and small software deliverables.')
+          elif kind=='glossary':
+              terms=[
+                ('Agent','An autonomous software actor that can perceive context, choose actions, and use tools to complete work.'),
+                ('Bounty','A posted task with a stated reward paid when defined completion conditions are met.'),
+                ('Escrow','Funds committed to a transaction and held under rules that govern release, refund, or dispute.'),
+                ('Reputation','A record of prior outcomes, reviews, or attestations used to estimate an agent’s reliability.'),
+                ('Heartbeat','A periodic signal showing that an agent or service is still active and reachable.'),
+                ('Wallet','An address and signing capability used to hold or move digital assets.'),
+                ('USDC','A dollar-denominated stablecoin commonly used for on-chain settlement.'),
+                ('Claim','The act of reserving or accepting responsibility for an available bounty.'),
+                ('Deliverable','The artifact, answer, code, dataset, or other output submitted to satisfy a task.'),
+                ('Settlement','The process that completes the economic side of a transaction by releasing or returning funds.'),
+                ('Gas','The network fee required for certain blockchain transactions.'),
+                ('Smart contract','Program code deployed on a blockchain that executes deterministic transaction rules.'),
+                ('MCP','Model Context Protocol, a standard interface that lets AI systems discover and call external tools.'),
+                ('API','An application programming interface that exposes structured operations for software-to-software interaction.'),
+                ('Dispute','A formal challenge to a transaction outcome that invokes the platform’s resolution process.')]
+              deliverable='\n'.join(f'**{a}:** {b}' for a,b in terms)
+          else:
+              cats=['DeFi','NFT','Gaming','Social']; rows=[]
+              for i in range(1,51):
+                  cat=cats[(i-1)%4]; name=f'NovaLedger {i:02d}'; ticker=f'NL{i:02d}'
+                  rows.append({'name':name,'ticker':ticker,'category':cat,'tagline':f'A fictional {cat} project concept for structured agent-economy testing.'})
+              deliverable=json.dumps(rows,indent=2)
+
+          # Current docs specify claim as authenticated POST with no request body.
+          c_s,c=req(f'{BASE}/listings/{lid}/claim','POST',None,auth)
+          if c_s not in (200,201):
+              gh_put('bridge/clawlancer-relay-status.json',{'stage':'claim_failed','nonce':nonce,'agent_id':AGENT_ID,'listing_id':lid,'listing_title':title,'claim_http':c_s,'claim_response':safe(c),'wallet_http':w_s,'wallet_response':safe(w)});raise SystemExit(7)
+          txid=txid_from(c)
+          if not txid:
+              t_s,txs=req(f'{BASE}/transactions?agent_id={AGENT_ID}',headers=auth)
+              pool=txs if isinstance(txs,list) else txs.get('transactions',[]) if isinstance(txs,dict) else []
+              for tx in pool:
+                  if isinstance(tx,dict) and str(tx.get('listing_id') or tx.get('listingId') or '')==lid:
+                      txid=str(tx.get('id') or tx.get('transaction_id') or '');break
+          if not txid:
+              gh_put('bridge/clawlancer-relay-status.json',{'stage':'claimed_tx_unresolved','nonce':nonce,'agent_id':AGENT_ID,'listing_id':lid,'claim_http':c_s});raise SystemExit(8)
+
+          d_s,d=req(f'{BASE}/transactions/{txid}/deliver','POST',{'deliverable':deliverable},auth)
+          if d_s not in (200,201):
+              gh_put('bridge/clawlancer-relay-status.json',{'stage':'delivery_failed','nonce':nonce,'agent_id':AGENT_ID,'listing_id':lid,'listing_title':title,'transaction_id':txid,'delivery_http':d_s,'delivery_response':safe(d)});raise SystemExit(9)
+
+          # Re-read wallet and transaction list after delivery. Do not release, withdraw, buy, fund, or spend anything.
+          time.sleep(2)
+          w2_s,w2=req(f'{BASE}/wallet/balance?agent_id={AGENT_ID}',headers=auth)
+          t2_s,t2=req(f'{BASE}/transactions?agent_id={AGENT_ID}',headers=auth)
+          gh_put('bridge/clawlancer-relay-status.json',{
+              'stage':'delivered','nonce':nonce,'agent_id':AGENT_ID,'listing_id':lid,'listing_title':title,
+              'listing_price_raw':price_of(target),'transaction_id':txid,'claim_http':c_s,'delivery_http':d_s,
+              'wallet_before_http':w_s,'wallet_before':safe(w),'wallet_after_http':w2_s,'wallet_after':safe(w2),
+              'transactions_http':t2_s,'transactions':safe(t2),'finished_at':int(time.time())
+          })
+          print('CLAWLANCER_ONE_SHOT=DELIVERED')
+          PY
