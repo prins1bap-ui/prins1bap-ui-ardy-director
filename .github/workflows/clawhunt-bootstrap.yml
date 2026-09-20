@@ -1,0 +1,60 @@
+name: ClawHunt bootstrap check
+
+on:
+  push:
+    branches:
+      - cash-op-clawhunt-bootstrap
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Register free agent and inspect target
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          cat > /tmp/pub.pem <<'EOF'
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq1D/g4d+jeGe8iAnHS/3
+vBow/dJq6g3hjMtZV301r7cAcXLjmMyHJQtOlM00uhxXY+H0Zb01gLQKYtYft0mP
+ZOGuBhDPOcpXuCY1uTbLVYtRJLocDiZs1D1ixM5MOVgrD7wcQXEpiRuwJ4ILQNSe
+sRPWESHWE8RSTYHC6AqojGLK6zU433frRQWFizCgFFLSBjLqVhIeDKdPbS2PPoQM
+QX2EiShRzpePo7PzPQHcByk+RXlLHeb6E7UNiwzEW6f4dN1/v59GSksSIe9A0zLc
+A/n34kgO6z5VYFBpMbwx9sAVNDSNZruKSu7/a1MgHleae2lswm+cZ2XAdyMH7QrA
+UwIDAQAB
+-----END PUBLIC KEY-----
+EOF
+          BODY=/tmp/quick.json
+          CODE=$(curl -sS -L -o "$BODY" -w '%{http_code}' -X POST 'https://clawhunt.store/api/quick-start' \
+            -H 'Content-Type: application/json' \
+            --data '{"name":"BlakeRevenueAgent"}')
+          if [ "$CODE" -ge 400 ]; then
+            printf '{"quick_start_http":%s,"quick_start_error":' "$CODE" > /tmp/payload.json
+            jq -c . "$BODY" >> /tmp/payload.json || true
+            exit 22
+          fi
+          API_KEY=$(jq -r '.api_key // empty' "$BODY")
+          [ -n "$API_KEY" ]
+          ME=$(curl -sS 'https://clawhunt.store/api/v1/me' -H "Authorization: Bearer $API_KEY")
+          PROBLEM=$(curl -sS 'https://clawhunt.store/api/v1/problems/1538' -H "Authorization: Bearer $API_KEY")
+          BIDS=$(curl -sS 'https://clawhunt.store/api/v1/problems/1538/bids' -H "Authorization: Bearer $API_KEY")
+          curl -sS 'https://clawhunt.store/openapi.json' -o /tmp/openapi.json
+          BID_SCHEMA=$(jq -c '.paths["/api/v1/problems/{problem_id}/bid"].post // null' /tmp/openapi.json)
+          jq -n \
+            --argjson quick "$(cat "$BODY")" \
+            --argjson me "$ME" \
+            --argjson problem "$PROBLEM" \
+            --argjson bids "$BIDS" \
+            --argjson bid_schema "$BID_SCHEMA" \
+            '{quick_start:$quick,me:$me,problem:$problem,bids:$bids,bid_schema:$bid_schema}' > /tmp/payload.json
+          PASS=$(openssl rand -hex 32)
+          printf '%s' "$PASS" | openssl pkeyutl -encrypt -pubin -inkey /tmp/pub.pem -pkeyopt rsa_padding_mode:oaep -out /tmp/pass.enc
+          openssl enc -aes-256-cbc -salt -pbkdf2 -pass "pass:$PASS" -in /tmp/payload.json -out /tmp/payload.enc
+          echo "ENC_KEY_B64=$(base64 -w0 /tmp/pass.enc)"
+          echo "ENC_DATA_B64=$(base64 -w0 /tmp/payload.enc)"
+          rm -f "$BODY" /tmp/payload.json /tmp/payload.enc /tmp/pass.enc /tmp/openapi.json /tmp/pub.pem
