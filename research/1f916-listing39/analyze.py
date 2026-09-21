@@ -225,12 +225,12 @@ def walk_activity(pop_by_handle):
 
         streams = set(d.get('has_more_streams', []))
         covers = set(d.get('continuation_covers', []))
-        active = streams.intersection({'posts', 'comments'})
-        if not active:
+        relevant = streams.intersection({'posts', 'comments'})
+        if relevant and not relevant.issubset(covers):
+            raise RuntimeError('continuation does not cover every stream that can report has_more')
+        if not bool(d.get('has_more', False)):
             final = d
             break
-        if not active.issubset(covers):
-            raise RuntimeError('continuation does not cover every stream with has_more')
         new_pt = str(d['next_posts_since'])
         new_ct = str(d['next_comments_since'])
         if (new_pt, new_ct) == (pt, ct):
@@ -260,7 +260,7 @@ def walk_activity(pop_by_handle):
         'final_has_more_streams': final.get('has_more_streams', []),
         'final_has_more': bool(final.get('has_more', False)),
         'same-token_boundary_retries': stall_events,
-        'reconciliation': 'Every page len(posts/comments) equaled rows_returned; row ids were de-duplicated; every advertised continuation was followed until neither stream had has_more. A repeated token pair is allowed for up to two boundary-transition retries because snapi snapshot cursors can pause before switching to live id cursors.',
+        'reconciliation': 'Every page len(posts/comments) equaled rows_returned; row ids were de-duplicated; continuation coverage was validated on every page; paging stopped only when the endpoint-level has_more became false. has_more_streams names streams capable of setting has_more, not streams that necessarily have another page.',
     }
 
 
