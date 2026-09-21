@@ -176,6 +176,7 @@ def walk_activity(pop_by_handle):
     stall_count = 0
     stall_events = 0
     first_tokens = None
+    first_page_bounds = None
     final = None
 
     while True:
@@ -201,6 +202,10 @@ def walk_activity(pop_by_handle):
             first_tokens = {
                 'posts': str(d['next_posts_since']),
                 'comments': str(d['next_comments_since']),
+            }
+            first_page_bounds = {
+                'posts_floor_id': (min(int(row['id']) for row in posts) - 1) if posts else None,
+                'comments_floor_id': (min(int(row['id']) for row in comments) - 1) if comments else None,
             }
 
         for row in posts:
@@ -247,6 +252,29 @@ def walk_activity(pop_by_handle):
         if pages > 1000:
             raise RuntimeError('activity pagination runaway')
 
+    def snapshot_max(token):
+        parts = token.split(':')
+        if len(parts) != 3 or parts[0] != 'snapi':
+            raise RuntimeError('unexpected initial snapshot token: ' + token)
+        return int(parts[1])
+
+    post_max = snapshot_max(first_tokens['posts'])
+    comment_max = snapshot_max(first_tokens['comments'])
+    post_floor = int(first_page_bounds['posts_floor_id'])
+    comment_floor = int(first_page_bounds['comments_floor_id'])
+    post_span = post_max - post_floor
+    comment_span = comment_max - comment_floor
+    post_seen_in_snapshot = sum(post_floor < row_id <= post_max for row_id in post_ids)
+    comment_seen_in_snapshot = sum(comment_floor < row_id <= comment_max for row_id in comment_ids)
+    if post_seen_in_snapshot != post_span:
+        raise RuntimeError(
+            f'post snapshot span incomplete: {post_seen_in_snapshot} unique ids != {post_span} id span'
+        )
+    if comment_seen_in_snapshot != comment_span:
+        raise RuntimeError(
+            f'comment snapshot span incomplete: {comment_seen_in_snapshot} unique ids != {comment_span} id span'
+        )
+
     return retained, {
         'endpoint': '/api/changes',
         'mode': 'lossless ID snapshot',
@@ -255,12 +283,28 @@ def walk_activity(pop_by_handle):
         'posts_walked': pw,
         'comments_walked': cw,
         'first_snapshot_tokens': first_tokens,
+        'snapshot_id_reconciliation': {
+            'posts': {
+                'floor_id': post_floor,
+                'max_id': post_max,
+                'expected_id_span': post_span,
+                'unique_ids_seen_in_span': post_seen_in_snapshot,
+                'complete': post_seen_in_snapshot == post_span,
+            },
+            'comments': {
+                'floor_id': comment_floor,
+                'max_id': comment_max,
+                'expected_id_span': comment_span,
+                'unique_ids_seen_in_span': comment_seen_in_snapshot,
+                'complete': comment_seen_in_snapshot == comment_span,
+            },
+        },
         'final_posts_token': str(final.get('next_posts_since')),
         'final_comments_token': str(final.get('next_comments_since')),
         'final_has_more_streams': final.get('has_more_streams', []),
         'final_has_more': bool(final.get('has_more', False)),
         'same-token_boundary_retries': stall_events,
-        'reconciliation': 'Every page len(posts/comments) equaled rows_returned; row ids were de-duplicated; continuation coverage was validated on every page; paging stopped only when the endpoint-level has_more became false. has_more_streams names streams capable of setting has_more, not streams that necessarily have another page.',
+        'reconciliation': 'Every page len(posts/comments) equaled rows_returned; row ids were de-duplicated; continuation coverage was validated on every page; the initial snapi max-id span reconciled exactly to the unique ids observed for both posts and comments; paging stopped only when endpoint-level has_more became false.',
     }
 
 
@@ -415,9 +459,10 @@ def main():
         '',
         f"- /api/citizens: {ccheck['pages']} pages, {ccheck['walked']} / {ccheck['endpoint_total']}, final has_more=false.",
         f"- /api/events?kind=key-bind&since=0: {echeck['pages']} pages, {echeck['walked']} / {echeck['endpoint_total']}, final has_more=false.",
-        f"- /api/changes: lossless ID snapshot, {acheck['pages']} pages, {acheck['posts_walked']} posts and {acheck['comments_walked']} comments parsed.",
-        f"- /api/changes final has_more_streams={acheck['final_has_more_streams']}; final has_more={acheck['final_has_more']}.",
-        '- Every activity page was reconciled against rows_returned and every stream advertising has_more was followed.',
+        f"- /api/changes: lossless ID snapshot, {acheck['pages']} pages, {acheck['posts_walked']} unique posts and {acheck['comments_walked']} unique comments parsed.",
+        f"- /api/changes snapshot ID reconciliation: posts {acheck['snapshot_id_reconciliation']['posts']['unique_ids_seen_in_span']} / {acheck['snapshot_id_reconciliation']['posts']['expected_id_span']} across ids ({acheck['snapshot_id_reconciliation']['posts']['floor_id']}, {acheck['snapshot_id_reconciliation']['posts']['max_id']}]; comments {acheck['snapshot_id_reconciliation']['comments']['unique_ids_seen_in_span']} / {acheck['snapshot_id_reconciliation']['comments']['expected_id_span']} across ids ({acheck['snapshot_id_reconciliation']['comments']['floor_id']}, {acheck['snapshot_id_reconciliation']['comments']['max_id']}].",
+        f"- /api/changes final has_more_streams={acheck['final_has_more_streams']}; final endpoint has_more={acheck['final_has_more']}.",
+        '- Every activity page matched rows_returned; every continuation covered the streams that could report more rows; paging stopped only at endpoint-level has_more=false.',
         '',
         '## Limits',
         '',
