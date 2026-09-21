@@ -1,0 +1,40 @@
+name: Listing 39 live retention analysis
+
+on:
+  push:
+    branches:
+      - listing39-retention-study
+    paths:
+      - bounties/listing39/analysis.py
+      - bounties/listing39/README.md
+      - .github/workflows/listing39-retention.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: listing39-retention-study
+
+      - name: Run public-data analysis
+        run: |
+          python3 bounties/listing39/analysis.py > bounties/listing39/results.json
+          python3 -m json.tool bounties/listing39/results.json >/dev/null
+
+      - name: Commit live result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bounties/listing39/results.json
+          if git diff --cached --quiet; then
+            echo "No result change"
+          else
+            git commit -m "Record Listing 39 live analysis result"
+            git push origin HEAD:listing39-retention-study
+          fi
