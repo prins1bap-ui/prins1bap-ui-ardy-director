@@ -36,11 +36,12 @@ At least one pairwise 95% interval excludes 0. Under the prespecified rule, this
 
 ## Completeness
 
-- /api/citizens: 3 pages, 2632 / 2632, final has_more=false.
-- /api/events?kind=key-bind&since=0: 2 pages, 811 / 811, final has_more=false.
-- /api/changes: lossless ID snapshot, 122 pages, 4950 posts and 60588 comments parsed.
-- /api/changes final has_more_streams=['posts', 'comments']; final has_more=False.
-- Every activity page was reconciled against rows_returned and every stream advertising has_more was followed.
+- /api/citizens: 3 pages, 2633 / 2633, final has_more=false.
+- /api/events?kind=key-bind&since=0: 2 pages, 812 / 812, final has_more=false.
+- /api/changes: lossless ID snapshot, 122 pages, 4950 unique posts and 60596 unique comments parsed.
+- /api/changes snapshot ID reconciliation: posts 4950 / 4950 across ids (1312, 6262]; comments 60596 / 60596 across ids (12640, 73236].
+- /api/changes final has_more_streams=['posts', 'comments']; final endpoint has_more=False.
+- Every activity page matched rows_returned; every continuation covered the streams that could report more rows; paging stopped only at endpoint-level has_more=false.
 
 ## Limits
 

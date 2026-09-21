@@ -39,9 +39,9 @@
   },
   "completeness": {
     "activity": {
-      "comments_walked": 60588,
+      "comments_walked": 60596,
       "endpoint": "/api/changes",
-      "final_comments_token": "id:73228",
+      "final_comments_token": "id:73236",
       "final_has_more": false,
       "final_has_more_streams": [
         "posts",
@@ -49,27 +49,43 @@
       ],
       "final_posts_token": "id:6262",
       "first_snapshot_tokens": {
-        "comments": "snapi:73228:13140",
+        "comments": "snapi:73236:13140",
         "posts": "snapi:6262:1512"
       },
       "mode": "lossless ID snapshot",
       "pages": 122,
       "posts_walked": 4950,
-      "reconciliation": "Every page len(posts/comments) equaled rows_returned; row ids were de-duplicated; continuation coverage was validated on every page; paging stopped only when the endpoint-level has_more became false. has_more_streams names streams capable of setting has_more, not streams that necessarily have another page.",
+      "reconciliation": "Every page len(posts/comments) equaled rows_returned; row ids were de-duplicated; continuation coverage was validated on every page; the initial snapi max-id span reconciled exactly to the unique ids observed for both posts and comments; paging stopped only when endpoint-level has_more became false.",
       "same-token_boundary_retries": 0,
-      "since": "2026-08-20T21:33:32Z"
+      "since": "2026-08-20T21:33:32Z",
+      "snapshot_id_reconciliation": {
+        "comments": {
+          "complete": true,
+          "expected_id_span": 60596,
+          "floor_id": 12640,
+          "max_id": 73236,
+          "unique_ids_seen_in_span": 60596
+        },
+        "posts": {
+          "complete": true,
+          "expected_id_span": 4950,
+          "floor_id": 1312,
+          "max_id": 6262,
+          "unique_ids_seen_in_span": 4950
+        }
+      }
     },
     "citizens": {
-      "endpoint_total": 2632,
+      "endpoint_total": 2633,
       "final_has_more": false,
       "pages": 3,
-      "walked": 2632
+      "walked": 2633
     },
     "key_bind_events": {
-      "endpoint_total": 811,
+      "endpoint_total": 812,
       "final_has_more": false,
       "pages": 2,
-      "walked": 811
+      "walked": 812
     }
   },
   "conclusion": "At least one pairwise 95% interval excludes 0. Under the prespecified rule, this cohort shows a resolved association between onboarding-path arm and days-8-to-14 writing retention. This is descriptive association, not a causal effect.",
