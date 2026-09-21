@@ -1,0 +1,2110 @@
+{
+  "analysis_started_at": "2026-09-21T19:39:51.469000Z",
+  "arms": {
+    "door": {
+      "ci95_wilson": [
+        0.18304402122560975,
+        0.2627884526997694
+      ],
+      "n": 413,
+      "rate": 0.22033898305084745,
+      "retained": 91
+    },
+    "none": {
+      "ci95_wilson": [
+        0.14107991397435618,
+        0.18554259966038764
+      ],
+      "n": 1055,
+      "rate": 0.16208530805687205,
+      "retained": 171
+    },
+    "sought": {
+      "ci95_wilson": [
+        0.4104235451977984,
+        0.5603095541651161
+      ],
+      "n": 167,
+      "rate": 0.48502994011976047,
+      "retained": 81
+    }
+  },
+  "boundary": {
+    "door_max_delay_ms": 1203,
+    "largest_adjacent_ratio": 6.646716541978387,
+    "next_delay_ms": 7996,
+    "top5_ratio_gaps": [
+      {
+        "lower_ms": 1203,
+        "ratio": 6.646716541978387,
+        "upper_ms": 7996
+      },
+      {
+        "lower_ms": 7996,
+        "ratio": 1.7397448724362181,
+        "upper_ms": 13911
+      },
+      {
+        "lower_ms": 9377879,
+        "ratio": 1.427861140029638,
+        "upper_ms": 13390309
+      },
+      {
+        "lower_ms": 22142827,
+        "ratio": 1.4037053624634288,
+        "upper_ms": 31082005
+      },
+      {
+        "lower_ms": 51127728,
+        "ratio": 1.391364584008114,
+        "upper_ms": 71137310
+      }
+    ]
+  },
+  "cohort_cutoff": "2026-09-07T19:39:51.469000Z",
+  "cohort_n": 1635,
+  "cohort_start": "2026-08-12T21:33:32Z",
+  "completeness": {
+    "changes": {
+      "comments_rows": 73233,
+      "comments_unique": 73233,
+      "pages": [
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:503",
+          "next_posts_since": "snapi:6262:202",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=init&comments_since=init&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:1003",
+          "next_posts_since": "snapi:6262:402",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A202&comments_since=snapi%3A73236%3A503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:1503",
+          "next_posts_since": "snapi:6262:602",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A402&comments_since=snapi%3A73236%3A1003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:2003",
+          "next_posts_since": "snapi:6262:802",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A602&comments_since=snapi%3A73236%3A1503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:2503",
+          "next_posts_since": "snapi:6262:1002",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A802&comments_since=snapi%3A73236%3A2003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:3003",
+          "next_posts_since": "snapi:6262:1202",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A1002&comments_since=snapi%3A73236%3A2503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:3503",
+          "next_posts_since": "snapi:6262:1402",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A1202&comments_since=snapi%3A73236%3A3003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:4003",
+          "next_posts_since": "snapi:6262:1602",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A1402&comments_since=snapi%3A73236%3A3503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:4503",
+          "next_posts_since": "snapi:6262:1802",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A1602&comments_since=snapi%3A73236%3A4003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:5003",
+          "next_posts_since": "snapi:6262:2002",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A1802&comments_since=snapi%3A73236%3A4503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:5503",
+          "next_posts_since": "snapi:6262:2202",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A2002&comments_since=snapi%3A73236%3A5003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:6003",
+          "next_posts_since": "snapi:6262:2402",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A2202&comments_since=snapi%3A73236%3A5503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:6503",
+          "next_posts_since": "snapi:6262:2602",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A2402&comments_since=snapi%3A73236%3A6003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:7003",
+          "next_posts_since": "snapi:6262:2802",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A2602&comments_since=snapi%3A73236%3A6503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:7503",
+          "next_posts_since": "snapi:6262:3002",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A2802&comments_since=snapi%3A73236%3A7003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:8003",
+          "next_posts_since": "snapi:6262:3202",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A3002&comments_since=snapi%3A73236%3A7503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:8503",
+          "next_posts_since": "snapi:6262:3402",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A3202&comments_since=snapi%3A73236%3A8003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:9003",
+          "next_posts_since": "snapi:6262:3602",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A3402&comments_since=snapi%3A73236%3A8503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:9503",
+          "next_posts_since": "snapi:6262:3802",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A3602&comments_since=snapi%3A73236%3A9003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:10003",
+          "next_posts_since": "snapi:6262:4002",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A3802&comments_since=snapi%3A73236%3A9503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:10503",
+          "next_posts_since": "snapi:6262:4202",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A4002&comments_since=snapi%3A73236%3A10003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:11003",
+          "next_posts_since": "snapi:6262:4402",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A4202&comments_since=snapi%3A73236%3A10503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:11503",
+          "next_posts_since": "snapi:6262:4602",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A4402&comments_since=snapi%3A73236%3A11003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:12003",
+          "next_posts_since": "snapi:6262:4802",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A4602&comments_since=snapi%3A73236%3A11503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:12503",
+          "next_posts_since": "snapi:6262:5002",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A4802&comments_since=snapi%3A73236%3A12003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:13003",
+          "next_posts_since": "snapi:6262:5202",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A5002&comments_since=snapi%3A73236%3A12503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:13503",
+          "next_posts_since": "snapi:6262:5402",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A5202&comments_since=snapi%3A73236%3A13003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:14003",
+          "next_posts_since": "snapi:6262:5602",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A5402&comments_since=snapi%3A73236%3A13503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:14503",
+          "next_posts_since": "snapi:6262:5802",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A5602&comments_since=snapi%3A73236%3A14003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:15003",
+          "next_posts_since": "snapi:6262:6002",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A5802&comments_since=snapi%3A73236%3A14503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:15503",
+          "next_posts_since": "snapi:6262:6202",
+          "next_since": 0,
+          "posts": 200,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A6002&comments_since=snapi%3A73236%3A15003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:16003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 60,
+          "route": "/api/changes?since=0&posts_since=snapi%3A6262%3A6202&comments_since=snapi%3A73236%3A15503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:16503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A16003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:17003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A16503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:17503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A17003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:18003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A17503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:18503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A18003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:19003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A18503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:19503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A19003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:20003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A19503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:20503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A20003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:21003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A20503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:21503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A21003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:22003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A21503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:22503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A22003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:23003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A22503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:23503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A23003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:24003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A23503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:24503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A24003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:25003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A24503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:25503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A25003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:26003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A25503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:26503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A26003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:27003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A26503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:27503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A27003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:28003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A27503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:28503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A28003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:29003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A28503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:29503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A29003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:30003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A29503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:30503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A30003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:31003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A30503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:31503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A31003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:32003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A31503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:32503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A32003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:33003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A32503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:33503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A33003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:34003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A33503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:34503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A34003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:35003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A34503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:35503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A35003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:36003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A35503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:36503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A36003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:37003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A36503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:37503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A37003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:38003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A37503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:38503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A38003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:39003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A38503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:39503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A39003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:40003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A39503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:40503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A40003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:41003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A40503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:41503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A41003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:42003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A41503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:42503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A42003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:43003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A42503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:43503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A43003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:44003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A43503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:44503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A44003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:45003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A44503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:45503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A45003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:46003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A45503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:46503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A46003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:47003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A46503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:47503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A47003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:48003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A47503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:48503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A48003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:49003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A48503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:49503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A49003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:50003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A49503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:50503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A50003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:51003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A50503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:51503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A51003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:52003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A51503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:52503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A52003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:53003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A52503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:53503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A53003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:54003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A53503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:54503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A54003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:55003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A54503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:55503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A55003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:56003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A55503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:56503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A56003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:57003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A56503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:57503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A57003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:58003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A57503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:58503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A58003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:59003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A58503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:59503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A59003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:60003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A59503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:60503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A60003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:61003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A60503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:61503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A61003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:62003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A61503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:62503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A62003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:63003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A62503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:63503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A63003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:64003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A63503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:64503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A64003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:65003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A64503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:65503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A65003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:66003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A65503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:66503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A66003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:67003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A66503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:67503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A67003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:68003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A67503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:68503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A68003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:69003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A68503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:69503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A69003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:70003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A69503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:70503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A70003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:71003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A70503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:71503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A71003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:72003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A71503&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:72503",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A72003&nulls_since=done"
+        },
+        {
+          "comments": 500,
+          "has_more": true,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "snapi:73236:73003",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A72503&nulls_since=done"
+        },
+        {
+          "comments": 233,
+          "has_more": false,
+          "has_more_streams": [
+            "posts",
+            "comments"
+          ],
+          "next_comments_since": "id:73236",
+          "next_posts_since": "id:6262",
+          "next_since": 0,
+          "posts": 0,
+          "route": "/api/changes?since=0&posts_since=id%3A6262&comments_since=snapi%3A73236%3A73003&nulls_since=done"
+        }
+      ],
+      "posts_rows": 6260,
+      "posts_unique": 6260
+    },
+    "citizens": {
+      "pages": [
+        {
+          "count": 2633,
+          "has_more": true,
+          "next_since": 1787389057153,
+          "route": "/api/citizens?since=0",
+          "rows": 1000,
+          "total": 2633
+        },
+        {
+          "count": 2633,
+          "has_more": true,
+          "next_since": 1787936958300,
+          "route": "/api/citizens?since=1787389057153",
+          "rows": 1000,
+          "total": 2633
+        },
+        {
+          "count": 2633,
+          "has_more": false,
+          "next_since": null,
+          "route": "/api/citizens?since=1787936958300",
+          "rows": 633,
+          "total": 2633
+        }
+      ],
+      "rows": 2633,
+      "unique_handles": 2633,
+      "unique_ids": 2633
+    },
+    "key_binds": {
+      "distinct_binders": 797,
+      "orphan_event_ids": [],
+      "pages": [
+        {
+          "count": 500,
+          "has_more": true,
+          "next_since": 4797,
+          "route": "/api/events?since=0&kind=key-bind",
+          "rows": 500,
+          "total": 812
+        },
+        {
+          "count": 312,
+          "has_more": false,
+          "next_since": null,
+          "route": "/api/events?since=4797&kind=key-bind",
+          "rows": 312,
+          "total": 812
+        }
+      ],
+      "rows": 812
+    }
+  },
+  "falsifier_pre_stated": "The onboarding-path association is not supported if door-minus-none is <= 0, or its 95% Newcombe-Wilson interval includes 0.",
+  "falsifier_triggered": false,
+  "listing": 39,
+  "outcome_window": "[registration+7d, registration+14d), interpreted as days 8-14",
+  "pairwise_differences": {
+    "door_minus_none": {
+      "ci95_newcombe_wilson": [
+        0.014195092323645436,
+        0.1056159390238604
+      ],
+      "point": 0.05825367499397541
+    },
+    "sought_minus_door": {
+      "ci95_newcombe_wilson": [
+        0.17885348485120078,
+        0.3487024709724467
+      ],
+      "point": 0.264690957068913
+    },
+    "sought_minus_none": {
+      "ci95_newcombe_wilson": [
+        0.24473747962384274,
+        0.4010999061739776
+      ],
+      "point": 0.3229446320628884
+    }
+  },
+  "pre_bind_activity": {
+    "door": {
+      "n": 413,
+      "share": 0.0,
+      "wrote_before_first_bind": 0
+    },
+    "sought": {
+      "n": 167,
+      "share": 0.5568862275449101,
+      "wrote_before_first_bind": 93
+    }
+  },
+  "sensitivity_window_registration_plus_8d_to_14d": {
+    "door": {
+      "ci95_wilson": [
+        0.17408412393519448,
+        0.2525564010352195
+      ],
+      "n": 413,
+      "rate": 0.2106537530266344,
+      "retained": 87
+    },
+    "none": {
+      "ci95_wilson": [
+        0.12595038475181414,
+        0.16856156151067342
+      ],
+      "n": 1055,
+      "rate": 0.14597156398104266,
+      "retained": 154
+    },
+    "sought": {
+      "ci95_wilson": [
+        0.39298970658294063,
+        0.5426231120154712
+      ],
+      "n": 167,
+      "rate": 0.46706586826347307,
+      "retained": 78
+    }
+  }
+}
