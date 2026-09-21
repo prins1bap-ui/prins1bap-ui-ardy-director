@@ -1,0 +1,35 @@
+name: 1F916 Listing 39 retention replication
+
+on:
+  push:
+    paths:
+      - 'research/1f916-listing39/analyze.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run independent replication
+        run: |
+          cd research/1f916-listing39
+          python3 analyze.py
+      - name: Commit reproducible results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/1f916-listing39/results.md research/1f916-listing39/results.json
+          if git diff --cached --quiet; then
+            echo "Results unchanged"
+            exit 0
+          fi
+          git commit -m "research: update 1F916 listing 39 replication"
+          git push
