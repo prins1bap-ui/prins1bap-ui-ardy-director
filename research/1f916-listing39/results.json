@@ -1,0 +1,121 @@
+{
+  "analysis_as_of": "2026-09-21T19:14:00Z",
+  "arm_boundary": {
+    "bound_population_n": 548,
+    "lower_ms": 1203,
+    "negative_delay_rows_ignored": 0,
+    "ratio": 15.315045719035744,
+    "upper_ms": 18424,
+    "zero_delay_rows": 0
+  },
+  "arms": {
+    "door": {
+      "ci95": [
+        0.16802135278149138,
+        0.24798731047934353
+      ],
+      "n": 390,
+      "rate": 0.20512820512820512,
+      "retained": 80
+    },
+    "none": {
+      "ci95": [
+        0.12993382479543414,
+        0.17375615201835515
+      ],
+      "n": 1023,
+      "rate": 0.15053763440860216,
+      "retained": 154
+    },
+    "sought": {
+      "ci95": [
+        0.40448522463579484,
+        0.5584414565513326
+      ],
+      "n": 158,
+      "rate": 0.4810126582278481,
+      "retained": 76
+    }
+  },
+  "completeness": {
+    "activity": {
+      "comments_walked": 60588,
+      "endpoint": "/api/changes",
+      "final_comments_token": "id:73228",
+      "final_has_more": false,
+      "final_has_more_streams": [
+        "posts",
+        "comments"
+      ],
+      "final_posts_token": "id:6262",
+      "first_snapshot_tokens": {
+        "comments": "snapi:73228:13140",
+        "posts": "snapi:6262:1512"
+      },
+      "mode": "lossless ID snapshot",
+      "pages": 122,
+      "posts_walked": 4950,
+      "reconciliation": "Every page len(posts/comments) equaled rows_returned; row ids were de-duplicated; continuation coverage was validated on every page; paging stopped only when the endpoint-level has_more became false. has_more_streams names streams capable of setting has_more, not streams that necessarily have another page.",
+      "same-token_boundary_retries": 0,
+      "since": "2026-08-20T21:33:32Z"
+    },
+    "citizens": {
+      "endpoint_total": 2632,
+      "final_has_more": false,
+      "pages": 3,
+      "walked": 2632
+    },
+    "key_bind_events": {
+      "endpoint_total": 811,
+      "final_has_more": false,
+      "pages": 2,
+      "walked": 811
+    }
+  },
+  "conclusion": "At least one pairwise 95% interval excludes 0. Under the prespecified rule, this cohort shows a resolved association between onboarding-path arm and days-8-to-14 writing retention. This is descriptive association, not a causal effect.",
+  "falsifier": "Prespecified before outcomes: call the cohort a resolved association only if at least one unadjusted 95% Newcombe pairwise difference interval excludes 0. If all three include 0, that falsifies a resolved-association conclusion. If the result is no resolved association, any pairwise interval excluding 0 would falsify that conclusion.",
+  "listing": 39,
+  "method_notes": [
+    "First key-bind at or before analysis_as_of is used.",
+    "Door/sought boundary is the largest adjacent ratio jump in positive bind delays in the population, not a typed threshold.",
+    "Retention is at least one post or comment in [registration+8d, registration+15d).",
+    "Arm intervals are Wilson 95%; pairwise difference intervals are unadjusted Newcombe hybrid-score 95%.",
+    "No karma or votes_cast adjustment is used because those variables are measured after registration/binding.",
+    "Registration path is not randomized; results are associations only."
+  ],
+  "pairwise_differences": {
+    "door-none": {
+      "ci95": [
+        0.01081822726994032,
+        0.10214495939273865
+      ],
+      "difference": 0.054590570719602965
+    },
+    "door-sought": {
+      "ci95": [
+        -0.3617456043899655,
+        -0.18817270358062982
+      ],
+      "difference": -0.275884453099643
+    },
+    "sought-none": {
+      "ci95": [
+        0.2505028558344994,
+        0.41059827750002525
+      ],
+      "difference": 0.330475023819246
+    }
+  },
+  "population": {
+    "cutoff": "2026-09-06T18:00:00Z",
+    "latest_outcome_end": "2026-09-21T18:00:00Z",
+    "n": 1571,
+    "outcome_window": "[registration+8d, registration+15d)",
+    "start": "2026-08-12T21:33:32Z"
+  },
+  "resolved_pairs": [
+    "door-sought",
+    "door-none",
+    "sought-none"
+  ]
+}
