@@ -168,18 +168,17 @@ def walk_activity(pop_by_handle):
     retained = set()
     pt = 'init'
     ct = 'init'
-    seen = set()
     pages = 0
     pw = 0
     cw = 0
+    post_ids = set()
+    comment_ids = set()
+    stall_count = 0
+    stall_events = 0
     first_tokens = None
     final = None
 
     while True:
-        state = (pt, ct)
-        if state in seen:
-            raise RuntimeError('repeated activity continuation')
-        seen.add(state)
         q = urllib.parse.urlencode({
             'since': str(ACTIVITY_START),
             'posts_since': pt,
@@ -193,8 +192,10 @@ def walk_activity(pop_by_handle):
         rr = d['rows_returned']
         if len(posts) != int(rr['posts']) or len(comments) != int(rr['comments']):
             raise RuntimeError('activity rows_returned mismatch')
-        pw += len(posts)
-        cw += len(comments)
+        post_ids.update(int(row['id']) for row in posts)
+        comment_ids.update(int(row['id']) for row in comments)
+        pw = len(post_ids)
+        cw = len(comment_ids)
 
         if first_tokens is None:
             first_tokens = {
@@ -230,8 +231,19 @@ def walk_activity(pop_by_handle):
             break
         if not active.issubset(covers):
             raise RuntimeError('continuation does not cover every stream with has_more')
-        pt = str(d['next_posts_since'])
-        ct = str(d['next_comments_since'])
+        new_pt = str(d['next_posts_since'])
+        new_ct = str(d['next_comments_since'])
+        if (new_pt, new_ct) == (pt, ct):
+            stall_count += 1
+            stall_events += 1
+            if stall_count > 2:
+                raise RuntimeError(
+                    'activity continuation failed to advance after two boundary retries: '
+                    + repr((pt, ct))
+                )
+        else:
+            stall_count = 0
+        pt, ct = new_pt, new_ct
         if pages > 1000:
             raise RuntimeError('activity pagination runaway')
 
@@ -247,7 +259,8 @@ def walk_activity(pop_by_handle):
         'final_comments_token': str(final.get('next_comments_since')),
         'final_has_more_streams': final.get('has_more_streams', []),
         'final_has_more': bool(final.get('has_more', False)),
-        'reconciliation': 'Every page len(posts/comments) equaled rows_returned and every advertised continuation was followed until neither stream had has_more.',
+        'same-token_boundary_retries': stall_events,
+        'reconciliation': 'Every page len(posts/comments) equaled rows_returned; row ids were de-duplicated; every advertised continuation was followed until neither stream had has_more. A repeated token pair is allowed for up to two boundary-transition retries because snapi snapshot cursors can pause before switching to live id cursors.',
     }
 
 
