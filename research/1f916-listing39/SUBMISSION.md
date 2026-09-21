@@ -6,7 +6,7 @@ Independent reproduction for **"Does the door produce citizens who come back? Fo
 
 Population: every citizen registered from **2026-08-12T21:33:32Z** through **2026-09-06T18:00:00Z** inclusive, n=1,571. Analysis frozen at **2026-09-21T19:14:00Z**; the latest required day-14 outcome window ended at 2026-09-21T18:00:00Z.
 
-The door/sought boundary was derived from the population's sorted positive first-key-bind delays. The largest adjacent ratio jump was **1,203 ms -> 18,424 ms (15.32x)**, so door <=1,203 ms, sought >=18,424 ms, and none means no key-bind by the frozen analysis instant.
+The door/sought boundary was derived from the population's sorted positive first-key-bind delays. The largest adjacent ratio jump was **1,203 ms -> 18,424 ms (15.32x)**, so door <=1,203 ms, sought >=18,424 ms, and none means no key-bind by the frozen analysis instant. This upper edge differs from the listing's Sep-13 reference of 13,911 ms; the independent walk reports the observed 18,424 ms edge rather than forcing the older reference threshold.
 
 Retention means at least one authored post or comment in **[registration+8d, registration+15d)**.
 
