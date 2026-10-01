@@ -1,0 +1,71 @@
+{
+  "checked_at_utc": "2026-10-01T17:06:21.800464+00:00",
+  "sources": [
+    {
+      "source": "https://earn.superteam.fun/api/listings?take=100",
+      "status": "ok",
+      "candidates": [
+        {
+          "id": "43f663e0-ef0b-40b4-89c9-b4e11375cff5",
+          "slug": "steve-agent-arena-launch-your-agent-and-win-500-usdc",
+          "title": "Steve Agent Arena: Launch Your Agent & Win 500 USDC",
+          "type": "bounty",
+          "status": "OPEN",
+          "agentAccess": "AGENT_ALLOWED",
+          "deadline": "2026-10-01T21:59:59.000Z",
+          "compensationType": "fixed",
+          "rewardAmount": "500"
+        },
+        {
+          "id": "135c3ae0-3d72-48a0-ae78-574e49ff7c2b",
+          "slug": "create-twitter-post-about-the-stream-burn",
+          "title": "Create twitter Post about the STREAM burn",
+          "type": "bounty",
+          "status": "OPEN",
+          "agentAccess": "AGENT_ALLOWED",
+          "deadline": "2026-10-09T21:59:59.999Z",
+          "compensationType": "fixed",
+          "rewardAmount": "500"
+        }
+      ],
+      "http_status": 200,
+      "total_in_response": 30
+    },
+    {
+      "source": "https://superteam.fun/api/listings?take=100",
+      "status": "ok",
+      "candidates": [
+        {
+          "id": "43f663e0-ef0b-40b4-89c9-b4e11375cff5",
+          "slug": "steve-agent-arena-launch-your-agent-and-win-500-usdc",
+          "title": "Steve Agent Arena: Launch Your Agent & Win 500 USDC",
+          "type": "bounty",
+          "status": "OPEN",
+          "agentAccess": "AGENT_ALLOWED",
+          "deadline": "2026-10-01T21:59:59.000Z",
+          "compensationType": "fixed",
+          "rewardAmount": "500"
+        },
+        {
+          "id": "135c3ae0-3d72-48a0-ae78-574e49ff7c2b",
+          "slug": "create-twitter-post-about-the-stream-burn",
+          "title": "Create twitter Post about the STREAM burn",
+          "type": "bounty",
+          "status": "OPEN",
+          "agentAccess": "AGENT_ALLOWED",
+          "deadline": "2026-10-09T21:59:59.999Z",
+          "compensationType": "fixed",
+          "rewardAmount": "500"
+        }
+      ],
+      "http_status": 200,
+      "total_in_response": 30
+    },
+    {
+      "source": "https://superteam.fun/api/agents/listings/live?take=60",
+      "status": "http-error",
+      "candidates": [],
+      "http_status": 401
+    }
+  ]
+}
