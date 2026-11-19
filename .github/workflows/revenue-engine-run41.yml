@@ -71,6 +71,32 @@ jobs:
               assert d['sha256']==sha and d['pages']>0 and d['network']=='BLOCKED'
               print(name,'verified',d['pages'],'pages')
           PY
+      - name: Adversarial container enforcement probes
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --pids-limit 32 --memory 256m --cpus 1 --user 10001:10001 --tmpfs /tmp:rw,noexec,nosuid,size=16m --mount type=bind,src="$PWD/inputs",dst=/inputs,readonly --mount type=bind,src="$PWD/outputs",dst=/outputs --entrypoint python revenue-run41-worker -c '
+          import os,socket,json,pathlib,resource
+          checks={}
+          for key,path in [("root_write","/run42_escape_probe"),("input_write","/inputs/escape_probe"),("host_secret","/root/.ssh/id_rsa")]:
+              try:
+                  if key=="host_secret": pathlib.Path(path).read_bytes(); checks[key]=False
+                  else: pathlib.Path(path).write_text("probe"); checks[key]=False
+              except (OSError,PermissionError): checks[key]=True
+          try: socket.socket().connect(("1.1.1.1",443)); checks["network"]=False
+          except OSError: checks["network"]=True
+          checks["nonroot"]=os.geteuid()!=0
+          checks["no_new_privs"]="NoNewPrivs:\t1" in pathlib.Path("/proc/self/status").read_text()
+          checks["capabilities_zero"]=next((s.split()[1]=="0000000000000000" for s in pathlib.Path("/proc/self/status").read_text().splitlines() if s.startswith("CapEff:")),False)
+          print(json.dumps(checks,sort_keys=True))
+          pathlib.Path("/outputs/adversarial.json").write_text(json.dumps(checks,indent=2))
+          assert all(checks.values()),checks
+          '
+      - name: Final originals completeness gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f outputs/FHWA.json && test -f outputs/DCPS.json || { echo 'BLOCKED: both original PDFs must complete; no production certification'; exit 1; }
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v4
