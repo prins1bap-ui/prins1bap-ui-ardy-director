@@ -1,0 +1,78 @@
+name: Revenue Engine Run41 free isolated PDF validation
+on:
+  push:
+    branches: [revenue-engine-run41-isolated-pdf-validation]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Prepare verified original PDFs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p inputs outputs
+          curl --fail --location --retry 2 --max-time 50 --output inputs/FHWA.pdf 'https://highways.dot.gov/federal-lands/business/simplified-acquisitions/amendment-of-solicitation-25Q000012_0001.pdf'
+          curl --fail --location --retry 2 --max-time 50 --output inputs/DCPS.pdf 'https://dcps.dc.gov/sites/default/files/dc/sites/dcps/page_content/attachments/Amendment_Modification%20%20N.001_.08.04.25pdf.pdf'
+          test "$(wc -c < inputs/FHWA.pdf)" -eq 140795
+          test "$(wc -c < inputs/DCPS.pdf)" -eq 291683
+          echo '6b23d55f8033ca84bbe949e3b05b4794df9c775ed173ec6ed80ca63a87659be2  inputs/FHWA.pdf' > originals.sha256
+          echo '56c3ad2fe87a4adff2ebc14b8f8bba225a66fb54f9a34e679c7aa3ddf1f7e1d7  inputs/DCPS.pdf' >> originals.sha256
+          sha256sum -c originals.sha256 | tee outputs/integrity.txt
+      - name: Build processing image
+        shell: bash
+        run: |
+          cat > Dockerfile.run41 <<'EOF'
+          FROM python:3.12-slim
+          RUN pip install --no-cache-dir pypdf==5.9.0 && useradd -u 10001 -m worker
+          USER 10001:10001
+          WORKDIR /work
+          ENTRYPOINT ["python","/work/worker.py"]
+          EOF
+          cat > worker.py <<'EOF'
+          import json,hashlib,pathlib,socket,sys
+          from pypdf import PdfReader
+          source=pathlib.Path('/inputs')/sys.argv[1]
+          data=source.read_bytes()
+          assert data.startswith(b'%PDF-')
+          reader=PdfReader(str(source),strict=True)
+          pages=len(reader.pages)
+          assert pages>0
+          try:
+              socket.socket(socket.AF_INET,socket.SOCK_STREAM).connect(('1.1.1.1',443))
+              network='ESCAPED'
+          except OSError:
+              network='BLOCKED'
+          assert network=='BLOCKED'
+          out={'name':source.name,'size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'pages':pages,'network':network,'page_text_characters':[len(p.extract_text() or '') for p in reader.pages]}
+          pathlib.Path('/outputs/'+source.stem+'.json').write_text(json.dumps(out,indent=2))
+          print(json.dumps(out))
+          EOF
+          docker build --pull -f Dockerfile.run41 -t revenue-run41-worker .
+      - name: Process both originals in isolated worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod 777 outputs
+          for doc in FHWA.pdf DCPS.pdf; do
+            docker run --rm --network none --read-only --cap-drop ALL --security-opt no-new-privileges --pids-limit 32 --memory 256m --cpus 1 --user 10001:10001 --tmpfs /tmp:rw,noexec,nosuid,size=16m --mount type=bind,src="$PWD/inputs",dst=/inputs,readonly --mount type=bind,src="$PWD/outputs",dst=/outputs --mount type=bind,src="$PWD/worker.py",dst=/work/worker.py,readonly revenue-run41-worker "$doc"
+          done
+          python - <<'PY'
+          import json
+          for name,sha in [('FHWA','6b23d55f8033ca84bbe949e3b05b4794df9c775ed173ec6ed80ca63a87659be2'),('DCPS','56c3ad2fe87a4adff2ebc14b8f8bba225a66fb54f9a34e679c7aa3ddf1f7e1d7')]:
+              d=json.load(open('outputs/'+name+'.json'))
+              assert d['sha256']==sha and d['pages']>0 and d['network']=='BLOCKED'
+              print(name,'verified',d['pages'],'pages')
+          PY
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run41-evidence
+          path: |
+            originals.sha256
+            outputs/
+          retention-days: 7
